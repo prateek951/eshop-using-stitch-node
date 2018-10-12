@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import BSON from 'bson';
 import { Stitch, RemoteMongoClient } from "mongodb-stitch-browser-sdk";
 import Products from "../../components/Products/Products";
 
@@ -10,15 +10,23 @@ class ProductsPage extends Component {
   }
 
   productDeleteHandler = productId => {
-    axios
-      .delete("http://localhost:3100/products/" + productId)
+    const mongodb = Stitch.defaultAppClient.getServiceClient(
+      RemoteMongoClient.factory,
+      "mongodb-atlas"
+    );
+    mongodb
+      .db("eshop")
+      .collection("products")
+      .deleteOne({
+        _id: new BSON.ObjectId(productId)
+      })
       .then(result => {
         console.log(result);
         this.fetchData();
       })
       .catch(err => {
         this.props.onError(
-          "Deleting the product failed. Please try again later"
+          "Deleting the product failed.Please try again later"
         );
         console.log(err);
       });
@@ -39,16 +47,14 @@ class ProductsPage extends Component {
           product._id = product._id.toString();
           product.price = product.price.toString();
           return product;
-        })
+        });
         console.log(products);
         this.setState({ products: products, isLoading: false });
       })
       .catch(err => {
         this.setState({ isLoading: false });
-        this.props.onError(
-          "Fetching products failed. Please try again later"
-        );
-      })
+        this.props.onError("Fetching products failed. Please try again later");
+      });
   };
 
   render() {
