@@ -1,0 +1,153 @@
+MongoDB The Complete Developers Guide Maximilian Schwarzmueller 
+
+Section 18 MongoDB Stitch 
+
+Beyond the data storage 
+
+A totally new set of features provided by MongoDB 
+These features are not directly connected with the database 
+These are the brand new features that you will learn in this core 
+module of the course. 
+
+Using the stitch you can also build the same modern applications 
+for both the web and the mobile platforms. Everything you learnt 
+about the database is not touched by this but things you will 
+learn in this module can help you build modern web and mobile 
+applications. 
+
+What is Stitch ? 
+
+Name of the service offering by Mongo
+
+Using Stitch we will take the application that we built in the last 
+module and transform it a little bit using the stitch service. We will 
+be able to get rid of the Node REST api which is a great deal because it allows 
+to focus entirely on our user interface and core business logic instead of writing 
+the core boilerplate code for setting up the REST API in Node.js 
+
+
+*************** What is Stitch ? 
+
+First of all, 
+
+What is Stitch ? A serverless platform for building applications. 
+
+Collection of services offered by the MongoDB Company that you can use 
+for building an app (mobile app or web app or desktop app) so that you 
+can focus on your user interface and the core business logic than the logic 
+which runs on the server i.e the backend . You don't have to write the backend server 
+managing the server and setting it up. You don't have to write the entire RESTapi server on your 
+own it is managed entirely by stitch service. 
+
+Cloud Database (Atlas) Integration becomes easily 
+
+Authentication made easy
+
+Stitch gives us access to the MongoDB Atlas database and this 
+access is available from our clientside application available 
+in our React Application. 
+
+Stitch does not expose the user credentials instead our application 
+users can sign up and login through the Stich Service and the 
+user will get temporary credentials for find/read access to the
+database and we can lock down what a single user can do 
+
+e.g What users are allowed to insert the documents into this 
+and this collection or what and what fields does the user can 
+insert we can control that here in Stitch. Here we can pass 
+the temporary credentials unlike the previous case where 
+they had full access with their Mongo Credentials here they 
+have partial access. Stitch takes our rules into account 
+and makes sure that users do have access to the database 
+and control the access using Stitch on what users can do 
+
+React to Events in Stitch (if something gets inserted into 
+database or get updated)
+
+Execute code/functions in the Cloud where we don't have 
+to write the boilerplate codes like parsing incoming request 
+and all,Exposing routes in our apis and all. 
+
+Stitch is something we can say as the MONGO's answer to the 
+Firebase Cloud Functions 
+
+Stitch QueryAnywhere 
+
+MongoDB Mobile basically a local mongo database which you 
+can install to mobile and sync it to cloud 
+
+Stitch Triggers. 
+
+Stitch Functions 
+
+Stitch Services Integrating Stitch to AWS S3 for file storage 
+
+
+Serverless                                          MongoDB 
+
+Client(App) Mobile App (SPA)                        backend 
+
+
+Stitch servers will do most of the heavylifting for us 
+rather than building the RESTful apis using Nodejs 
+
+********* MongoDB Atlas *************** 
+
+Go to Stitch Apps on the left hand side 
+
+Create new application 
+
+Give your application a name 
+
+Link to a cluster(optional)
+
+And finally click on Create
+
+Dive into the rules here 
+Same as Firebase
+
+If no rules are add here everything is locked down as in Firebase 
+
+It is more or less inspired from Firebase in general 
+
+Enter the database name 
+Enter the collection name and the rules for that collection 
+
+
+Select a template 
+No template 
+
+You can add a schema validation here and Stitch will try to throw an error if you try to save something 
+that doesn't suffice this criteria 
+
+Permissions 
+
+Default Permission included for every authenticated entity including the anonymous signed in users 
+We can allow read access here for reading documents in this collection and reading all the fields. 
+You have fine grain control over all the levels.
+
+Configuration in Stitch 
+
+Users Control managed by Stitch 
+
+Logs for what happened in your stitch applications 
+
+Push Notifications for mobile apps 
+
+Refer the Stitch Documentation 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
