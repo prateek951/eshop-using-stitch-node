@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { Stitch } from 'mongodb-stitch-browser-sdk'
+import { Stitch, AnonymousCredential } from 'mongodb-stitch-browser-sdk'
 import Header from './components/Header/Header';
 import Modal from './components/Modal/Modal';
 import Backdrop from './components/Backdrop/Backdrop';
@@ -19,7 +19,9 @@ class App extends Component {
 
   constructor() {
     super();
-    Stitch.initializeDefaultAppClient('eshop-nzhmm');
+    const client = Stitch.initializeDefaultAppClient('eshop-nzhmm');
+    // Anonymous login 
+    client.auth.loginWithCredential(new AnonymousCredential());
   }
 
   logoutHandler = () => {
