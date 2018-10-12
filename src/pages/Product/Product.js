@@ -1,22 +1,35 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-
-import './Product.css';
+import React, { Component } from "react";
+import { Stitch, RemoteMongoClient } from "mongodb-stitch-browser-sdk";
+import BSON from "bson";
+import "./Product.css";
 
 class ProductPage extends Component {
   state = { isLoading: true, product: null };
 
   componentDidMount() {
-    axios
-      .get('http://localhost:3100/products/' + this.props.match.params.id)
-      .then(productResponse => {
-        this.setState({ isLoading: false, product: productResponse.data });
+    const mongodb = Stitch.defaultAppClient.getServiceClient(
+      RemoteMongoClient.factory,
+      "mongodb-atlas"
+    );
+    mongodb
+      .db("eshop")
+      .collection("products")
+      .find({ _id: new BSON.ObjectId(this.props.match.params.id) })
+      .asArray()
+      .then(product => {
+        const product = product[0];
+        product._id = product._id.toString();
+        product.price = product.price.toString();
+        this.setState({ product: product, isLoading: false });
       })
       .catch(err => {
-        this.setState({ isLoading: false });
         console.log(err);
-        this.props.onError('Loading the product failed. Please try again later');
+        this.setState({ isLoading: false });
+        this.props.onError(
+          "Loading the product failed. Please try again later"
+        );
       });
+
   }
 
   render() {
