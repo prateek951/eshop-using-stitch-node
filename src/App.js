@@ -24,6 +24,12 @@ class App extends Component {
   constructor() {
     super();
     this.client = Stitch.initializeDefaultAppClient("eshop-nzhmm");
+    // Stitch.defaultAppClient.auth.loginWithRedirect(auth => {
+    //   this.setState({ isAuth: auth.isLoggedIn });
+    // })
+    // To invoke a function that is on server side 
+    
+    // this.client.callFunction('Greet',['Prateek']);
   }
 
   logoutHandler = () => {
