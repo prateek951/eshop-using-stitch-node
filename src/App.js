@@ -1,27 +1,25 @@
-import React, { Component } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { Stitch, AnonymousCredential } from 'mongodb-stitch-browser-sdk'
-import Header from './components/Header/Header';
-import Modal from './components/Modal/Modal';
-import Backdrop from './components/Backdrop/Backdrop';
-import ProductsPage from './pages/Product/Products';
-import ProductPage from './pages/Product/Product';
-import EditProductPage from './pages/Product/EditProduct';
-import AuthPage from './pages/Auth/Auth';
-import ConfirmAccountPage from './pages/Auth/ConfirmAccount';
+import React, { Component } from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
+import { Stitch, UserPasswordAuthProviderClient } from "mongodb-stitch-browser-sdk";
+import Header from "./components/Header/Header";
+import Modal from "./components/Modal/Modal";
+import Backdrop from "./components/Backdrop/Backdrop";
+import ProductsPage from "./pages/Product/Products";
+import ProductPage from "./pages/Product/Product";
+import EditProductPage from "./pages/Product/EditProduct";
+import AuthPage from "./pages/Auth/Auth";
+import ConfirmAccountPage from "./pages/Auth/ConfirmAccount";
 
 class App extends Component {
   state = {
-    isAuth: true,
-    authMode: 'login',
+    isAuth: false,
+    authMode: "login",
     error: null
   };
 
   constructor() {
     super();
-    const client = Stitch.initializeDefaultAppClient('eshop-nzhmm');
-    // Anonymous login 
-    client.auth.loginWithCredential(new AnonymousCredential());
+    this.client = Stitch.initializeDefaultAppClient("eshop-nzhmm");
   }
 
   logoutHandler = () => {
@@ -30,9 +28,20 @@ class App extends Component {
 
   authHandler = (event, authData) => {
     event.preventDefault();
-    // if (authData.email.trim() === '' || authData.password.trim() === '') {
-    //   return;
-    // }
+    if (authData.email.trim() === "" || authData.password.trim() === "") {
+      return;
+    }
+    const emailpassclient = this.client.auth.getProviderClient(
+      UserPasswordAuthProviderClient.factory
+    );
+    emailpassclient.registerWithEmail(authData.email,authData.password)
+    .then(() => {
+
+    }).catch(err => {
+      this.errorHandler('An error occured here');
+      console.log(err);
+      this.setState({ isAuth: false });
+    })
     // let request;
     // if (this.state.authMode === 'login') {
     //   request = axios.post('http://localhost:3100/login', authData);
@@ -59,7 +68,7 @@ class App extends Component {
   authModeChangedHandler = () => {
     this.setState(prevState => {
       return {
-        authMode: prevState.authMode === 'login' ? 'signup' : 'login'
+        authMode: prevState.authMode === "login" ? "signup" : "login"
       };
     });
   };
