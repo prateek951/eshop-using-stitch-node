@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { Stitch, UserPasswordAuthProviderClient } from "mongodb-stitch-browser-sdk";
+import {
+  Stitch,
+  UserPasswordAuthProviderClient,
+  UserPasswordCredential
+} from "mongodb-stitch-browser-sdk";
 import Header from "./components/Header/Header";
 import Modal from "./components/Modal/Modal";
 import Backdrop from "./components/Backdrop/Backdrop";
@@ -34,14 +38,34 @@ class App extends Component {
     const emailpassclient = this.client.auth.getProviderClient(
       UserPasswordAuthProviderClient.factory
     );
-    emailpassclient.registerWithEmail(authData.email,authData.password)
-    .then(() => {
+    let request;
+    if (this.state.authMode === "login") {
+      //async call for login
+      const credential = new UserPasswordCredential(
+        authData.email,
+        authData.password
+      );
 
-    }).catch(err => {
-      this.errorHandler('An error occured here');
-      console.log(err);
-      this.setState({ isAuth: false });
-    })
+      request = this.client.auth.loginWithCredential(credential);
+    } else {
+      //async call for register
+      request = emailpassclient.registerWithEmail(
+        authData.email,
+        authData.password
+      );
+    }
+    request
+      .then(result => {
+        console.log(result);
+        if (result) {
+          this.setState({ isAuth: true });
+        }
+      })
+      .catch(err => {
+        this.errorHandler("An error occured here");
+        console.log(err);
+        this.setState({ isAuth: false });
+      });
     // let request;
     // if (this.state.authMode === 'login') {
     //   request = axios.post('http://localhost:3100/login', authData);
