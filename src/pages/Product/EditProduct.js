@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { Stitch, RemoteMongoClient } from "mongodb-stitch-browser-sdk";
 import BSON from "bson";
 import "./EditProduct.css";
@@ -18,27 +17,38 @@ class ProductEditPage extends Component {
   componentDidMount() {
     // Will be "edit" or "add"
     if (this.props.match.params.mode === "edit") {
-      axios
-        .get("http://localhost:3100/products/" + this.props.match.params.id)
+      const mongodb = Stitch.defaultAppClient.getServiceClient(
+        RemoteMongoClient.factory,
+        "mongodb-atlas"
+      );
+      mongodb
+        .db("eshop")
+        .collection("products")
+        .find({ _id: new BSON.ObjectId(this.props.match.params.id) })
+        .asArray()
         .then(productResponse => {
-          const product = productResponse.data;
+          const product = productResponse[0];
+          product._id = product._id.toString();
+          product.price = product.price.toString();
           this.setState({
             isLoading: false,
             title: product.name,
-            price: product.price.toString(),
-            imageUrl: product.image,
+            price: product.price,
+            imageUrl: product.imageUrl,
             description: product.description
           });
         })
         .catch(err => {
           this.setState({ isLoading: false });
           console.log(err);
+          this.props.onError(
+            "Loading the product failed. Please try again later."
+          );
         });
     } else {
       this.setState({ isLoading: false });
     }
   }
-
   editProductHandler = event => {
     event.preventDefault();
     if (
@@ -57,19 +67,23 @@ class ProductEditPage extends Component {
       description: this.state.description
     };
     let request;
+    const mongodb = Stitch.defaultAppClient.getServiceClient(
+      RemoteMongoClient.factory,
+      "mongodb-atlas"
+    );
     if (this.props.match.params.mode === "edit") {
-      request = axios.patch(
-        "http://localhost:3100/products/" + this.props.match.params.id,
-        productData
-      );
+      request = mongodb
+        .db("eshop")
+        .collection("products")
+        .updateOne(
+          { _id: new BSON.ObjectId(this.props.match.params.id) },
+          productData
+        );
     } else {
-      const mongodb = Stitch.defaultAppClient.getServiceClient(
-        RemoteMongoClient.factory,
-        "mongodb-atlas"
-      );
-      request = mongodb.db('eshop').collection('products')
-      .insertOne(productData);
-
+      request = mongodb
+        .db("eshop")
+        .collection("products")
+        .insertOne(productData);
     }
     request
       .then(result => {
